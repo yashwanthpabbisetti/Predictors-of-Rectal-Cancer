@@ -1,0 +1,473 @@
+
+
+
+
+R Final_Project
+
+Loacation of Dataset Used: "dataset.csv"
+
+Group 6 1) Harinandini Appam
+        2)Srikanth Reddy Putluri
+        3)Sarvari Chava
+        4)Ravi Teja Chilaka
+        5)Devika Manyam
+        6)Yashwnath Pabbisetti
+        
+    
+##Loading the required packages
+```{r}
+packages <- c('tidyverse','ggmosaic','waffle','gridExtra','readxl','ggrepel','scales','httr','data.table','RNHANES','caret','nnet','ordinal','VGAM','ggplot')
+library(tidyverse)
+library(dplyr)
+library(nnet)
+library(VGAM)
+``` 
+
+##Importing the data
+```{r}
+data <- read.csv("dataset.csv")
+summary(data)
+```
+
+
+
+
+##Selecting the required columns from the data and renaming the variables
+```{r}
+status <- data[, "status"]
+sex <- data[, "sex"]
+age <- data[, "age"]
+differ_tumor <- data[, "differ"]
+extent <- data[, "extent"]
+surgery <- data[, "surg"]
+positive_lymph_nodes <- data[, "node4"]
+perfor_colon <- data[,"perfor"] 
+```
+
+
+
+##Data Visualization
+##Histogram of Status
+```{r}
+data %>%
+  drop_na(status) %>% 
+  ggplot(aes(x = status)) +
+  geom_histogram()+
+  labs(x = "Status", y = "Frequency")
+```
+
+The above graph depicts about the status of patients who has regret and no regret by this there is no much difference between these two categories is nearly as equal as regrets.The graph is useful for visually summarizing the distribution of a categorical variable and provides an initial insight into the makeup of the dataset.
+
+
+```{r}
+data %>%
+  drop_na(status) %>% 
+  ggplot(aes(x =age,y=status))  +
+  geom_point(aes(fill=status),stat="summary",fun=mean)+
+  labs(x = "Age", y = "Status")
+```
+The above graph depict between age and status which what age groups are at status,Mostly the the age group 60 has more in number for regret and age group 30 are less in number.x
+
+
+
+#Sex Distribution
+```{r}
+data %>%
+  drop_na(sex) %>%
+  ggplot(aes(x = sex)) +
+  geom_bar(aes(fill=sex)) +
+  scale_fill_manual(values = c("#7463AC", "gray"), guide = FALSE) +
+  labs(title="Sex Distribution",x = "Sex", y = "Number of People")+
+  theme_minimal()
+```
+
+The output of the provided code shows that there are more people in the Male category than in the Female category. The height of the Male bar is greater than the height of the Female bar, indicating a higher number of observations in the Male category.
+
+Therefore, the interpretation of the graph is that the majority of people in the dataset are males. The graph is useful for visually summarizing the distribution of a categorical variable and provides an initial insight into the makeup of the dataset.
+
+
+```{r}
+data %>%
+  drop_na(sex) %>%
+  ggplot(aes(x = sex,y=status)) +
+  geom_point(aes(fill=sex)) +
+  labs(title="Sex Distribution",x = "Sex", y = "Number of People")
+```
+#Age groups
+
+```{r}
+data %>%
+  drop_na(age) %>% 
+  ggplot(aes(x=age)) +
+  geom_bar()+
+  labs(title="AgeGroups",x = "Age", y = "Number of people")
+```
+
+```{r}
+plot(age)
+```
+
+The above graph depicts age, which contains continuous age values of the patients in the dataset. The age is on the x-axis and the count of observations on the y-axis.
+
+Looking at the histogram, we can see that the ages are distributed between approximately 30 and 85, with the majority of patients falling between the ages of 40 and 70. The histogram shows that there are more patients in their 50s than in any other age group. The age group with the second-highest number of patients is the 60s, followed by the 40s, the 70s, and the 80s.
+
+The age distribution of the patients in the colon dataset can provide valuable insights into the demographics of the sample population.  It includes patients with advanced colorectal cancer. However, the histogram does provide a useful visualization of the age distribution within the sample population.
+
+
+
+
+##Differentiation of Tumor
+
+```{r}
+data %>%
+  drop_na(differ) %>% 
+  ggplot(aes(x = differ)) +
+  geom_bar() +
+  labs(x = "Tumor_Differentiation", y = "Number of people")
+```
+
+```{r}
+plot(differ_tumor)
+```
+
+
+
+The graph shows the distribution of the differ variable in the data dataset. The differ variable measures the differentiation of the tumor cells, where lower values indicate more poorly differentiated cells and higher values indicate more well-differentiated cells. The majority of patients in the sample have a moderately differentiated tumor with a value of around 50. There are also a few patients with poorly differentiated tumors with values less than 20, and some patients with well-differentiated tumors with values greater than 80. Overall, the plot provides a visual summary of the differentiation of tumor cells in the sample population. 
+
+##Extent Spread of the Disease
+```{r}
+data %>%
+  drop_na(extent) %>% 
+  ggplot(aes(x = extent)) +
+  geom_bar() +
+  labs(x = "Extent", y = "Number of people")
+```
+
+```{r}
+plot(extent)
+```
+
+The graph shows the distribution of the extent variable in the data dataset. The extent variable measures the extent of the tumor, where larger values indicate a larger tumor. The histogram shows that the majority of patients have a tumor extent between 0 and 1, with a few patients having a tumor extent greater than 1. Overall, the plot provides a visual summary of the extent of tumors in the sample population.
+
+## Surgery_Time
+```{r}
+data %>%
+  drop_na(surg) %>% 
+  ggplot(aes(x = surg)) +
+  geom_histogram()+
+  labs(x = "Time_Surgery", y = "Number of people")
+```
+
+```{r}
+plot(surgery)
+```
+
+The graph shows the distribution of the surg variable in the data dataset. The surg variable measures the time interval between the date of diagnosis and the date of surgery in days.
+
+The histogram shows that the majority of patients had surgery within approximately 50 to 100 days after diagnosis, with a few patients having surgery within 200 to 300 days after diagnosis. Overall, the plot provides a visual summary of the time interval between the date of diagnosis and the date of surgery for the sample population.
+
+
+##Lymph Nodes
+```{r}
+data %>%
+  drop_na(node4) %>% 
+  ggplot(aes(x = node4)) +
+  geom_histogram() +
+  labs(x = "Positive_Lymph_Node", y = "Toatal People")
+```
+
+```{r}
+plot(node4)
+```
+
+
+The node4 variable measures the number of positive lymph nodes found in the patient.
+
+The histogram shows the distribution of the node4 variable, with the x-axis representing the number of positive lymph nodes and the y-axis representing the count of observations. The histogram shows that the majority of patients have a low number of positive lymph nodes, with a few patients having a higher number of positive lymph nodes. Overall, the plot provides a visual summary of the number of positive lymph nodes found in the sample population.
+
+##Perforation 
+```{r}
+data %>%
+  drop_na(perfor) %>% 
+  ggplot(aes(x = perfor)) +
+  geom_histogram() +
+  labs(x = "Perforation", y = "Number of people")
+```
+
+```{r}
+plot(perfor_colon)
+```
+
+The perfor variable measures whether there was perforation of the tumor through the bowel wall or not.
+
+The histogram shows the distribution of the perfor variable, with the x-axis representing the categories of the variable (either no or yes) and the y-axis representing the count of observations. The histogram shows that the majority of patients did not have perforation of the tumor through the bowel wall, with only a few patients having experienced perforation. Overall, the plot provides a visual summary of the perforation status in the sample population.
+
+Chi-Square Test
+```{r}
+chisq.test(status,age)
+```
+The test statistic (X-squared) is 127.35 and the degrees of freedom (df) is 61, which indicates that there are 61 categories in the contingency table formed by the two variables.
+
+The p-value of the test is 1.384e-06, which is very small (less than 0.05). This suggests that there is a significant association between status and age. In other words, the observed frequencies in the contingency table are unlikely to occur by chance if there is no association between the two variables. Therefore, we can reject the null hypothesis of independence and conclude that there is a significant relationship between status and age. However, it's important to note that the chi-squared test only tells us that there is a significant relationship between the two variables, but it does not provide information about the nature or strength of the relationship.
+
+Anova Test
+```{r}
+modl1 <-aov(status~sex*age,data=data)
+summary(modl1)
+```
+Sex: The results show that there was no significant main effect of sex on status (F(1, 1854) = 0.046, p = 0.829), indicating that there was no significant difference in status between males and females.
+
+Age: The results show that there was no significant main effect of age on status (F(1, 1854) = 1.085, p = 0.298), indicating that there was no significant difference in status between different age groups.
+
+Sex:Age Interaction: The results show that the interaction between sex and age was not statistically significant (F(1, 1854) = 2.651, p = 0.104), suggesting that there was no significant difference in status between different combinations of sex and age.
+
+Residuals: The residual row shows the within-group variation in status that was not explained by sex, age, or the sex:age interaction. The sum of squares for the residuals was 463.5, and the mean square was 0.25
+
+
+
+#Simple Regression Models
+```{r}
+#regression between status and sex
+model1<-lm(status~sex)
+summary(model1)
+```
+-The intercept (or constant) is 0.4989, which is the predicted mean value of "status" when "sex" is 0 (assuming 0 represents one of the two categories of "sex" and 1 represents the other). Since there is only one independent variable, the coefficient for "sex" represents the difference in the mean value of "status" between the two categories of "sex".
+
+-The coefficient for "sex" is -0.0071, which indicates that the mean value of "status" is slightly lower for the second category of "sex" (represented by 1) than for the first category (represented by 0). However, this difference is not statistically significant because the p-value for the coefficient is 0.759, which is greater than the typical threshold of 0.05.
+
+-The R-squared value is very small (0.00005), indicating that the variation in "status" is not well explained by "sex" alone. This is also reflected in the adjusted R-squared value, which is negative (-0.00049), suggesting that adding "sex" as an independent variable does not improve the model's fit.
+
+-The F-statistic tests the overall significance of the model, which in this case is not significant (p-value = 0.7586). This means that the model as a whole does not provide a significant improvement in predicting "status" compared to a model that uses only the mean value of "status" as a predictor.
+```{r}
+#regression between status and age
+model2<-lm(status~age)
+summary(model2)
+```
+The intercept is 0.5559, which is the predicted mean value of "status" when "age" is 0. However, since age cannot be negative, this value does not have any meaningful interpretation in this context.
+
+The coefficient for "age" is -0.0010, indicating that, on average, there is a small negative relationship between "age" and "status". However, this relationship is not statistically significant because the p-value for the coefficient is 0.296, which is greater than the typical threshold of 0.05.
+
+The R-squared value is very small (0.00059), indicating that the variation in "status" is not well explained by "age" alone. This is also reflected in the adjusted R-squared value, which is close to zero.
+
+The F-statistic tests the overall significance of the model, which in this case is not significant (p-value = 0.2958). This means that the model as a whole does not provide a significant improvement in predicting "status" compared to a model that uses only the mean value of "status" as a predictor.
+
+```{r}
+#regression between status and differ
+model3<-lm(status~differ_tumor)
+summary(model3)
+```
+The intercept is 0.3521, which is the predicted mean value of "status" when "differ" is 0.
+
+The coefficient for "differ" is 0.0698, indicating that there is a positive relationship between "differ" and "status". Specifically, for each one-unit increase in "differ", "status" is predicted to increase by 0.0698 units.
+
+The p-value for the coefficient is 0.0022, which is less than the typical threshold of 0.05, indicating that the relationship between "differ" and "status" is statistically significant.
+
+The R-squared value is 0.0052, indicating that only a small proportion of the variation in "status" can be explained by "differ". The adjusted R-squared value is also small, suggesting that the model is not a good fit for the data.
+
+The F-statistic tests the overall significance of the model, which in this case is significant (p-value = 0.0022). This means that the model as a whole provides a significant improvement in predicting "status" compared to a model that uses only the mean value of "status" as a predictor.
+```{r}
+#regression between status and extent
+model4<-lm(status~extent)
+summary(model4)
+```
+-The intercept coefficient (0.01222) represents the estimated value of "status" when "extent" is zero. However, it is not statistically significant (p-value = 0.859), meaning that the intercept is not significantly different from zero.
+
+-The coefficient of "extent" (0.16728) represents the expected change in "status" for each one-unit increase in "extent". This coefficient is statistically significant (p-value < 0.001), indicating that "extent" is significantly associated with "status".
+
+-The R-squared value (0.02665) indicates that about 2.7% of the variation in "status" can be explained by "extent". However, the adjusted R-squared value (-0.02612) suggests that the model may not be a good fit for the data, as the addition of the "extent" variable does not significantly improve the model's predictive power.
+
+-The F-statistic (50.81) tests the overall significance of the model and its variables, and the p-value (1.452e-12) suggests that the model is significant overall, indicating that at least one of the variables in the model is significantly associated with the dependent variable.
+```{r}
+#regression between status and surg
+model5<-lm(status~surgery)
+summary(model5)
+```
+The first line shows the call to the lm() function that was used to fit the model.
+
+The "Residuals" section shows the minimum, first quartile, median, third quartile, and maximum values of the residuals (observed minus predicted values).
+
+The "Coefficients" section shows the estimated coefficients for the intercept and predictor variable(s), along with their standard errors, t-values, and p-values. The intercept is the expected value of the response when all predictor variables are equal to 0. The coefficients for the predictor variables represent the change in the response variable for a one-unit increase in the predictor variable, holding all other variables constant.
+
+The "Signif. codes" section shows the significance level of the p-value for each coefficient. The significance levels are denoted by asterisks, with more asterisks indicating higher significance levels.
+
+The "Residual standard error" represents the standard deviation of the residuals, which measures the average distance between the observed values and the predicted values.
+
+The "Multiple R-squared" represents the proportion of the variability in the response variable that is explained by the predictor variable(s). The "Adjusted R-squared" is a modified version of the R-squared that adjusts for the number of predictor variables in the model.
+
+The "F-statistic" tests the overall significance of the model by comparing the variability explained by the model to the variability not explained by the model. The "p-value" for the F-statistic represents the probability of obtaining an F-statistic as large or larger than the observed value if the null hypothesis (that all coefficients are equal to 0) is true.
+```{r}
+#regression between status and node4
+model6<-lm(status~positive_lymph_nodes )
+summary(model6)
+```
+Residuals: These are the differences between the predicted values from the model and the actual observed values. The output shows the minimum, first quartile, median, third quartile, and maximum values of the residuals.
+Coefficients: These are the estimated coefficients of the linear regression model. The intercept (the value of the dependent variable when all independent variables are 0) is 0.41469. The coefficient for the independent variable node4 is 0.29315, which means that a one-unit increase in node4 is associated with a 0.29315 increase in the dependent variable.
+Signif. codes: These indicate the level of significance of the coefficients. The '***' next to the intercept and node4 means that they are both statistically significant at the 0.001 level.
+Residual standard error: This is an estimate of the standard deviation of the residuals.
+Multiple R-squared: This is a measure of how well the model fits the data, ranging from 0 to 1. In this case, the multiple R-squared is 0.06846, which means that the model explains only 6.85% of the variance in the dependent variable.
+Adjusted R-squared: This is a modified version of the R-squared that penalizes the inclusion of additional independent variables in the model. In this case, the adjusted R-squared is slightly lower than the multiple R-squared, indicating that the model is not improved by the inclusion of additional independent variables.
+F-statistic: This is a test of the overall significance of the model. In this case, the F-statistic is 136.4 with 1 and 1856 degrees of freedom, which means that the model is statistically significant at a very low p-value (<2.2e-16).
+```{r}
+#regression between status and perfor
+model7<-lm(status~perfor_colon)
+summary(model7)
+```
+The first output is the summary of a linear regression model that predicts "status" based on the "node4" variable. The output shows that the intercept and the "node4" variable are both statistically significant predictors of "status". The estimated intercept is 0.41469, which represents the predicted "status" score when "node4" is equal to zero. The estimated coefficient for "node4" is 0.29315, which represents the change in the predicted "status" score for a one-unit increase in "node4". The R-squared value of 0.06846 indicates that only a small proportion of the variability in "status" is explained by "node4".
+
+The second output is the summary of a linear regression model that predicts "status" based on the "perfor" variable. The output shows that the intercept is a statistically significant predictor of "status", but the "perfor" variable is not. The estimated intercept is 0.49224, which represents the predicted "status" score when "perfor" is equal to zero. The estimated coefficient for "perfor" is 0.10035, which represents the change in the predicted "status" score for a one-unit increase in "perfor". However, the p-value for "perfor" is 0.146, which is greater than the typical significance level of 0.05, indicating that "perfor" is not a statistically significant predictor of "status". The R-squared value of 0.001137 indicates that only a very small proportion of the variability in "status" is explained by "perfor".
+```{r}
+#multivariate simple regression model
+model8<-lm(status~sex+age+differ_tumor+extent+surgery+positive_lymph_nodes+perfor_colon) 
+summary(model8)
+```
+This is a multiple linear regression model that predicts the relationship between the status variable (outcome variable) and the predictor variables sex, age, differ, extent, surg, node4, and perfor.
+
+The p-values associated with the coefficients estimate indicate whether each predictor variable is statistically significant in explaining the variance in the outcome variable. The null hypothesis is that the coefficient for a predictor variable is zero (meaning that the variable is not significantly related to the outcome variable). If the p-value is less than the significance level (typically 0.05), then we reject the null hypothesis and conclude that the variable is significantly related to the outcome variable.
+
+From the results, we can see that the variables extent and surg are statistically significant (p < 0.001), while node4 is highly significant (p < 0.0001), and the other predictor variables are not significant (p > 0.05). The adjusted R-squared value of 0.08832 suggests that this model explains only a small proportion of the variance in the outcome variable. The residual standard error is 0.4775, which indicates the average distance between the observed data and the predicted values by the model.
+
+
+# Multi-nomial models
+```{r}
+df$status<-as.factor(df$status)
+df$sex<-as.factor(df$sex)
+df$stdiffer<-as.factor(df$differ)
+df$extent<-as.factor(df$extent)
+df$surg<-as.factor(df$surg)
+df$node4<-as.factor(df$node4)
+df$perfor<-as.factor(df$perfor)
+```
+
+```{r}
+#status and sex logistic regression 
+model9<-multinom(status~sex,data=df)
+summary(model9)
+```
+The code is fitting a multinomial logistic regression model with "status" as the response variable and "sex" as the predictor variable.
+
+The output shows the coefficients for the intercept and the predictor variable ("sex1" which represents the male sex). The intercept coefficient indicates the expected log odds of being in the reference category for the response variable ("status" in this case) when the predictor variable is 0 (in this case, when the sex is female, which is the reference category).
+
+The coefficient for the predictor variable ("sex1") represents the difference in the expected log odds of being in each of the categories of the response variable between males and females. In this case, the coefficient is negative, indicating that males have lower expected log odds of being in each of the categories compared to females.
+
+The AIC (Akaike Information Criterion) and residual deviance are measures of model fit. The lower the values, the better the model fit.
+```{r}
+#status and age logistic regression
+model10<-multinom(status~age,data=df) 
+summary(model10)
+```
+The coefficients table shows the estimated values for the intercept and the slope for age. The intercept indicates the expected log-odds of the baseline level of the response variable (the reference level) when the age is equal to zero. In this case, the intercept is 0.2236, meaning that the log-odds of the baseline level of the response variable increases by 0.2236 for each unit increase in age.
+
+The coefficient for age is -0.0041, indicating that for every one-unit increase in age, the log-odds of the baseline level of the response variable decreases by 0.0041. The standard error for the coefficient indicates how much the coefficient might vary if the study were replicated.
+
+The model summary shows the residual deviance, which is a measure of the goodness of fit of the model, and the AIC, which is a measure of the model's quality relative to other models. In this case, the residual deviance is 2574.466 and the AIC is 2578.466, suggesting that the model fits the data reasonably well but may not be the best possible model.
+```{r}
+#status and differ logistic regression 
+model11<-multinom(status~differ_tumor)
+summary(model11)
+```
+The intercept represents the log-odds of being in the reference category of "status" (i.e., the category that was left out of the model) when "differ" is 0.
+The coefficient for "differ" represents the change in the log-odds of being in each category of "status" associated with a one-unit increase in "differ". Specifically, for a one-unit increase in "differ", the log-odds of being in the first category of "status" increase by 0.2811523, while the log-odds of being in the second category of "status" decrease by 0.2811523. The log-odds of being in the reference category of "status" do not change.
+The model has a residual deviance of 2502.485 and an AIC of 2506.485. The residual deviance measures how well the model fits the data (lower values are better), while the AIC is a measure of the model's goodness of fit that takes into account the number of parameters in the model (lower values are better).
+
+
+```{r}
+#status and extent logistic regression 
+model12<-multinom(status~extent)
+summary(model12)
+```
+The model estimates the coefficients of three categories of 'extent' with reference to the baseline category, which is 'extent1'. The coefficients represent the expected change in the log odds of being in each of the categories of 'status' for a one-unit increase in the corresponding extent category, holding all other variables constant.
+
+For example, the coefficient of 'extent2' is 0.59, which indicates that a one-unit increase in the extent category from 1 to 2 is associated with an increase of 0.59 in the log odds of being in the 'status' category, compared to the baseline category, while holding all other variables constant.
+
+The model has converged, and the residual deviance is 2524.003, while the AIC is 2532.003.
+```{r}
+#status surg logistic regression 
+model13<-multinom(status~surgery)
+summary(model13)
+``` 
+In this case, the dependent variable status has more than two categories, and there are two independent variables (surg). The output shows the estimated coefficients (or weights) for the intercept and each independent variable, along with their standard errors.
+
+The coefficients for surg1 indicates how much the log odds of being in a particular category of status increase when surg is equal to 1 (versus 0). For example, the log odds of being in status=2 versus status=1 is estimated to increase by 0.3586 when surg=1.
+
+The Residual Deviance is a measure of how well the model fits the data, with smaller values indicating a better fit. The AIC is a measure of the model's overall goodness of fit, with lower values indicating a better fit.
+```{r}
+#status node4 logistic regression 
+model14<-multinom(status~positive_lymph_nodes)
+summary(model14)
+```
+This code is fitting a multinomial logistic regression model using the multinom() function in R. The response variable status is being modeled as a function of a single predictor variable node4.
+
+The output shows the estimated coefficients of the model along with their standard errors. The intercept coefficient is -0.3446227, and the coefficient for node41 is 1.2295543. These coefficients can be used to predict the log odds of each level of the response variable given the value of the predictor variable.
+
+The final value of the residual deviance is 2445.442, and the final value of the Akaike Information Criterion (AIC) is 2449.442. These values can be used to compare the fit of this model to other candidate models. A lower AIC indicates a better fit.
+```{r}
+#status perfor logistic regression
+model15<-multinom(status~perfor_colon) 
+summary(model15)
+```
+The code is fitting a multinomial logistic regression model using the function multinom in the R programming language. The formula used to fit the model is status ~ perfor, which means that the variable perfor is used as the predictor for the outcome variable status, where status is a categorical variable with more than two levels.
+
+The output shows the coefficients for the model, which are the estimates of the effects of the predictor variable on the outcome variable for each level of the outcome variable. The intercept coefficient is -0.031, which represents the estimated log-odds of the reference level of status, when perfor is equal to 0. The coefficient for perfor1 is 0.406, which represents the estimated difference in the log-odds of the level of status corresponding to perfor1 compared to the reference level, when perfor is equal to 1.
+
+The output also shows the residual deviance, which is a measure of the goodness of fit of the model, and the AIC (Akaike Information Criterion), which is a measure of the model's quality that takes into account the number of parameters in the model. In this case, the model seems to have converged and the AIC is 2577.438.
+
+
+
+
+
+
+```{r}
+#multivariate logistic regression model
+model16<-multinom(status~sex+age+differ_tumor+extent+surgery+positive_lymph_nodes+perfor_colon) 
+summary(model16)
+```
+Intercept): The intercept is the estimated log odds of the reference category of the dependent variable (status = 1) when all other predictors are equal to zero. The estimated intercept is -1.643, which means that the log odds of status = 1 is negative when all other predictors are zero.
+
+sex1: The coefficient for sex1 is -0.016, which means that the log odds of status = 2 relative to status = 1 is expected to decrease by 0.016 when the person is female (sex1 = 1) compared to when they are male (sex1 = 0).
+
+age: The coefficient for age is 0.0014, which means that the log odds of status = 2 relative to status = 1 is expected to increase by 0.0014 for each additional year of age.
+
+differ: The coefficient for differ is 0.084, which means that the log odds of status = 2 relative to status = 1 is expected to increase by 0.084 for each additional point increase in the differentiation level.
+
+extent2, extent3, and extent4: These are the coefficients for the extent variable, which has four categories (extent1 is the reference category). The coefficient for extent2 is 0.33, which means that the log odds of status = 2 relative to status = 1 is expected to increase by 0.33 when the extent is 2 compared to when it is 1. Similarly, the coefficients for extent3 and extent4 indicate that the log odds of status = 2 relative to status = 1 is expected to increase by 1.01 and 1.58, respectively, when the extent is 3 or 4 compared to when it is 1.
+
+surg1: The coefficient for surg1 is 0.41, which means that the log odds of status = 2 relative to status = 1 is expected to increase by 0.41 when the person underwent surgery (surg1 = 1) compared to when they did not undergo surgery (surg1 = 0).
+
+node41: The coefficient for node41 is 1.19, which means that the log odds of status = 3 relative to status = 1 is expected to increase by 1.19 when there is nodal involvement (node41 = 1) compared to when there is no nodal involvement (node41 = 0).
+
+perfor1: The coefficient for perfor1 is 0.35, which means that the log odds of status = 2 relative to status = 1 is expected to increase by 0.35 when there is perforation (perfor1 = 1) compared to when there is no perforation (perfor1 = 0).
+
+The residual deviance is 2337.94, which represents the unexplained variation in the model after accounting for the predictor variables. The AIC value is 2357.94, which is a measure of the model fit that takes into account the number of predictor variables. Lower AIC values indicate better model fit.
+
+```{r}
+#independent T tests
+# perform independent t-test based on Sex
+ttest_sex <- t.test(status ~ sex)
+print(ttest_sex)
+```
+The t-value of 0.21543 indicates that the difference between the means of the two groups is not large relative to the amount of variability within each group. The degrees of freedom (df) is 1844.2, which is calculated using a modified formula to account for unequal variances between the two groups.
+
+The p-value of 0.8295 indicates that there is not enough evidence to reject the null hypothesis, which is that there is no difference between the means of the two groups on the variable being measured. Specifically, the null hypothesis assumes that the true difference in means between the female and male groups is equal to 0. Therefore, we can conclude that there is no significant difference between the means of the two groups on the variable being measured.
+
+The 95 percent confidence interval (CI) is [-0.04055387, 0.05056232], which indicates that we are 95 percent confident that the true difference in means between the two groups lies between these two values.
+
+The sample estimates provide the mean for each group: 0.4977578 for females and 0.4927536 for males. This indicates that the mean for females is slightly higher than the mean for males, but the difference is not statistically significant.
+
+
+
+
+
+```{r}
+install.packages("rmarkdown")
+```
+
+```{r}
+setwd("/HDS5310/R final Project")
+```
+
+```{r}
+rmarkdown::render("Predictors_of_Treatment_Related_Regrets_in_Bowel_Cancer_Patients-1.Rmd", output_format = "word_document")
+```
+
+
+
